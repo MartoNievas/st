@@ -68,6 +68,18 @@ static unsigned int blinktimeout = 800;
 static unsigned int cursorthickness = 2;
 
 /*
+ * 1: render most of the lines/blocks characters without using the font for
+ *    perfect alignment between cells (U2500 - U259F except dashes/diagonals).
+ *    Bold affects lines thickness if boxdraw_bold is not 0. Italic is ignored.
+ * 0: disable (render all U25XX glyphs normally from the font).
+ */
+const int boxdraw = 0;
+const int boxdraw_bold = 0;
+
+/* braille (U28XX):  1: render as adjacent "pixels",  0: use font */
+const int boxdraw_braille = 0;
+
+/*
  * bell volume. It must be a value between -100 and 100. Use 0 for disabling
  * it
  */
@@ -98,38 +110,30 @@ float alpha = 0.5;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-    /* 8 normal colors */
-    [0] = "#000000", /* black   */
+    /* Colores normales */
+    [0] = "#282a36", /* black   */
     [1] = "#ff5555", /* red     */
     [2] = "#50fa7b", /* green   */
-    [3] = "#f1fa8c", /* yellow  */
-    [4] = "#bd93f9", /* blue    */
+    [3] = "#ffb86c", /* yellow/orange (Match con tu barra) */
+    [4] = "#8be9fd", /* blue    */
     [5] = "#ff79c6", /* magenta */
     [6] = "#8be9fd", /* cyan    */
-    [7] = "#bbbbbb", /* white   */
-                                  
-    /* 8 bright colors */
-    [8]  = "#44475a", /* black   */
-    [9]  = "#ff5555", /* red     */
-    [10] = "#50fa7b", /* green   */
-    [11] = "#f1fa8c", /* yellow  */
-    [12] = "#bd93f9", /* blue    */
-    [13] = "#ff79c6", /* magenta */
-    [14] = "#8be9fd", /* cyan    */
+    [7] = "#bfbfbf", /* white   */
+
+    /* Colores brillantes */
+    [8]  = "#4d4d4d", /* black   */
+    [9]  = "#ff6e6e", /* red     */
+    [10] = "#69ff94", /* green   */
+    [11] = "#ffca85", /* yellow  */
+    [12] = "#9aedfe", /* blue    */
+    [13] = "#ff92df", /* magenta */
+    [14] = "#a4ffff", /* cyan    */
     [15] = "#ffffff", /* white   */
-                                   
-    /* special colors */
-    [256] = "#282a36", /* background */
+
+    /* Especiales */
+    [256] = "#1e1f29", /* background (un poco más oscuro que Dracula original) */
     [257] = "#f8f8f2", /* foreground */
-
-	/* more colors can be added after 255 to use with DefaultXX */
-	"#cccccc",
-	"#555555",
-	"gray90", /* default foreground colour */
-	"black", /* default background colour */
 };
-
-
 /*
  * Default colors (colorname index)
  * foreground, background, cursor
@@ -214,6 +218,8 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
 	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
+	{ ShiftMask,            XK_Page_Up,     kscrollup,      {.i = -1} },
+	{ ShiftMask,            XK_Page_Down,   kscrolldown,    {.i = -1} },
 };
 
 /*
